@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('buildings', function (Blueprint $table) {
+        Schema::create('windows', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('building_id');
             $table->float('width');
             $table->float('length');
-            $table->float('height');
+            $table->integer('count')->default(1);
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->ondelete('null');
+            $table->foreign('building_id')->references('id')->on('buildings')->onUpdate('cascade')->ondelete('null');
         });
     }
 
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('buildings');
+        Schema::dropIfExists('windows');
     }
 };
