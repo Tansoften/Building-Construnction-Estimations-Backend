@@ -17,17 +17,17 @@ class BuildingSeeder extends Seeder
         //1
         Building::create([
                 'user_id' => 1,
-                "width"=> 500,
-                "length"=> 500,
-                "height"=> 500
+                "width"=> 4,
+                "length"=> 5,
+                "height"=> 5
         ]);
 
         //2
         Building::create([
             'user_id' => 1,
-            "width"=> 500,
-            "length"=> 500,
-            "height"=> 500
+            "width"=> 5,
+            "length"=> 5,
+            "height"=> 5
         ]);
     }
 }

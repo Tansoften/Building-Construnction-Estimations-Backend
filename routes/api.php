@@ -2,6 +2,7 @@
 use App\Http\Controllers\BuildingController;
 use App\Http\Controllers\DoorController;
 use App\Http\Controllers\WindowController;
+use App\Http\Controllers\EstimationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,7 @@ Route::prefix('buildings')->group(function(){
             Route::put('/update/{windowId}',[WindowController::class,'update']);
         });
 
+        Route::get('/estimation/building/{buildingId}',[EstimationController::class,'estimate']);
 
 Route::fallback(function(){
     return response()->json(

@@ -17,8 +17,8 @@ class WindowSeeder extends Seeder
                 //1
                 Window::create([
                     "building_id" => 1,
-                    "width"=> 10,
-                    "length"=> 20,
+                    "width"=> 1,
+                    "length"=> 1,
                     "count" => 2
                 ]);
 

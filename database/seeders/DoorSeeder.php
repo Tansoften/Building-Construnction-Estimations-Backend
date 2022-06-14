@@ -17,15 +17,15 @@ class DoorSeeder extends Seeder
         //1
         Door::create([
             "building_id" => 1,
-            "width"=> 20,
-            "length"=> 50,
+            "width"=> 0.5,
+            "length"=> 1,
             "count" => 1
         ]);
         //2
         Door::create([
             "building_id" => 2,
-            "width"=> 20,
-            "length"=> 40,
+            "width"=> 0.5,
+            "length"=> 1,
             "count" => 1
         ]);
     }

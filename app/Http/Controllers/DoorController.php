@@ -57,9 +57,9 @@ class DoorController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $buidingId)
+    public function store(Request $request, $buildingId)
     {
-        $building = Building::find($buidingId);
+        $building = Building::find($buildingId);
         if(!$building){
             return response()->json([
                 "message" => "No building found.",
@@ -70,7 +70,7 @@ class DoorController extends Controller
             //Create the ressource
            $door =  Door::create([
                 'user_id'=>1,
-                'building_id' => $buidingId,
+                'building_id' => $buildingId,
                 'width' => $request->width,
                 'length' => $request->length,
                 'count' => $request->count
