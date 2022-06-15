@@ -43,12 +43,12 @@
 # Building
 
 **List All Buildings**
-- URI:address/api/building
+- URI:address/api/buildings
 - HTTP METHOD: GET
 
 
 **Create New Buildng**
-- URI:address/api/building/new
+- URI:address/api/buildings/new
 - HTTP METHOD: POST
 - BODY SAMPLE: {
     "width": 5,
@@ -58,12 +58,12 @@
 
 
 **View Specific Building**
-- URI:address/api/building/view/1
+- URI:address/api/buildings/view/1
 - HTTP METHOD: GET
 
 
 **Update Building**
-- URI:address/api/building/update/1
+- URI:address/api/buildings/update/1
 - HTTP METHOD: PUT
 - BODY SAMPLE: {
     "width": 5,
