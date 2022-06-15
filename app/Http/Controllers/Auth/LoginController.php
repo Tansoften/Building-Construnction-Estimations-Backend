@@ -1,6 +1,13 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Closure;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
+
+use App\Http\Constants\Errors;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
@@ -36,5 +43,30 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function authenticate(Request $request)
+    {
+        $credentials= $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::attempt($credentials)) {
+ 
+            $user = Auth::user();
+            $token = $user -> createToken('token')->plainTextToken; 
+            return response([
+                'message' => 'Successful login',
+                'user' => $user,
+                'token' => $token
+            ],200);
+        }
+
+        return response([
+            'message' => "Invalid Credentials"
+        ],200);
+
+
     }
 }
