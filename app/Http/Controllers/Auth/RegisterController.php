@@ -8,6 +8,9 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class RegisterController extends Controller
 {
@@ -47,12 +50,23 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator(array $data)
+    protected function validator($data)
     {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        // return Validator::make($data, [
+        //     'name' => ['required', 'string', 'max:255'],
+        //     'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        //     'password' => ['required', 'string', 'min:8', 'confirmed'],
+        // ]);
+
+        return Validator::make($data,[
+            'first_name' => 'required|max:30|alpha|regex:/^[A-Z]/',
+            'last_name'=> 'required|max:30|alpha|regex:/^[A-Z]/',
+            'gender' => 'required|max:1|alpha|regex:/^[M,F]/',
+            'phone' => 'required|numeric|digits:10|unique:users',
+            'email' => 'required|email|unique:users',
+            'password' =>'required|min:6',
+            //'confirm_password' => 'required|same:password'
+              
         ]);
     }
 
@@ -62,12 +76,39 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function create(array $data)
+    protected function create(Request $request)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+        // return User::create([
+        //     'name' => $data['name'],
+        //     'email' => $data['email'],
+        //     'password' => Hash::make($data['password']),
+        // ]);
+
+        $user = User::create([
+            'first_name'=>$request->first_name,
+            'last_name'=>$request->last_name,
+            'gender'=>$request->gender,
+            'phone'=>$request->phone,
+            'email'=>$request->email,
+            'password'=> Hash::make($request->password)
         ]);
+
+        $validator = $this->validator($request->all());
+        if($validator -> errors() -> isEmpty()){
+                
+            if($user != null){
+
+                return  response()->json(
+                    [
+                        'message' => 'User Registered successful'
+                    ],200
+                );
+            }
+            return response()->json(
+                [
+                    'error' =>$validator -> errors()
+                ],200
+            );
+        }
     }
 }

@@ -13,6 +13,24 @@ use Illuminate\Support\Facades\Artisan;
 | simple approach to interacting with each command's IO methods.
 |
 */
+Artisan::command('db:boot', function(){
+    $this->comment('Migrating tables...');
+    $this->call('migrate');
+
+    $this->comment('Seeding tables...');
+    $this->call('db:seed');
+
+    //$this->comment('Scheduling the system');
+    //$this->call('schedule:work');
+    
+    $this->comment('Done!');
+})->purpose('Initializing database.');
+
+Artisan::command('db:reboot', function(){
+    $this->comment('Rolling back tables...');
+    $this->call('migrate:reset');
+    $this->call('db:boot');
+})->purpose('Resetting database.');
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
