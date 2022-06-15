@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Building;
 class EstimationController extends Controller
 {
@@ -17,7 +18,11 @@ class EstimationController extends Controller
                 "message" => "Building does not exist."
             ],404);
         }
-
+        if(!Gate::check('isUser', $building->user)){
+            return response()->json([
+                'message' => "You can't perform this action."
+            ],403);
+        }
         $width  = $building->width * 100;
         $length  = $building->length * 100;
         $height  = $building->height * 100;

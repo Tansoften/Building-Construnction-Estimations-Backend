@@ -22,29 +22,19 @@ use App\Http\Controllers\UserController;
 
 Route::middleware('auth:sanctum')->group(function () 
 {
-    //user
-    Route::get('/user', function (Request $request)
-        {
-            return response()->json([
-                'user' => $request->user()
-            ]);    
-        }
-    );
+        //User
+        Route::prefix('user')->group(function(){
+            Route::get('/',[UserController::class, 'show']);
+            Route::post('/update',[UserController::class, 'update']);
+            Route::put('/changepassword',[UserController::class, 'changepassword']);
+        });
 
-
-
-});
-
-Route::post('/register',[RegisterController::class,'create']);
-Route::post('login',[LoginController::class,'authenticate']);
-Route::prefix('buildings')->group(function(){
+        Route::prefix('buildings')->group(function(){
         Route::get('/',[BuildingController::class, 'index']);
         Route::post('/new',[BuildingController::class, 'store']);
         Route::get('/view/{buildingId}',[BuildingController::class, 'show']);
         Route::put('/update/{buildingId}',[BuildingController::class, 'update']);
-
-
-});
+        });
         //Doors
         Route::prefix('doors')->group(function(){
             Route::get('/building/{buildingId}',[DoorController::class,'index']);
@@ -62,6 +52,11 @@ Route::prefix('buildings')->group(function(){
         });
 
         Route::get('/estimation/building/{buildingId}',[EstimationController::class,'estimate']);
+
+});
+
+Route::post('/register',[RegisterController::class,'create']);
+Route::post('login',[LoginController::class,'authenticate']);
 
 Route::fallback(function(){
     return response()->json(

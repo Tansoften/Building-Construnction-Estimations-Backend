@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\Models\Building;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class BuildingController extends Controller
@@ -23,7 +25,7 @@ class BuildingController extends Controller
      */
     public function index()
     {
-        $user = User::find(1);
+        $user = Auth::user();
         $buidings = $user->buildings;
         if(!$buidings->isEmpty()){
             return response()->json([
@@ -58,7 +60,7 @@ class BuildingController extends Controller
         if($validate->errors()->isEmpty()){
             //Create the ressource
            $building =  Building::create([
-                'user_id' => 1,
+                'user_id' => Auth::user()->id,
                 'width' => $request->width,
                 'length' => $request->length,
                 'height' => $request->height,

@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Window;
 use App\Models\Building;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 class WindowController extends Controller
 {
     private function validator($data){
@@ -28,6 +29,11 @@ class WindowController extends Controller
             return response()->json([
                 "message" => "No building found.",
             ],200); 
+        }
+        if(!Gate::check('isUser', $building->user)){
+            return response()->json([
+                'message' => "You can't perform this action."
+            ],403);
         }
         $windows = $building->windows;
         if(!$windows->isEmpty()){
@@ -65,11 +71,15 @@ class WindowController extends Controller
                 "message" => "No building found.",
             ],200); 
         }
+        if(!Gate::check('isUser', $building->user)){
+            return response()->json([
+                'message' => "You can't perform this action."
+            ],403);
+        }
         $validate = $this->validator($request->all());
         if($validate->errors()->isEmpty()){
             //Create the ressource
            $window =  Window::create([
-                'user_id'=>1,
                 'building_id' => $buildingId,
                 'width' => $request->width,
                 'length' => $request->length,
@@ -100,6 +110,11 @@ class WindowController extends Controller
             return response()->json([
                 "message" => "No Window is found.",
             ],200); 
+        }
+        if(!Gate::check('isUser', $window->building->user)){
+            return response()->json([
+                'message' => "You can't perform this action."
+            ],403);
         }
         return response()->json([
             "message" => "Window retrieved successfully",
@@ -132,6 +147,11 @@ class WindowController extends Controller
             return response()->json([
                 "message" => "No Window is found.",
             ],200); 
+        }
+        if(!Gate::check('isUser', $window->building->user)){
+            return response()->json([
+                'message' => "You can't perform this action."
+            ],403);
         }
         $validate = $this->validator($request->all());
         if($validate->errors()->isEmpty()){

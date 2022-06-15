@@ -50,7 +50,7 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator($data)
+    public function validator($data)
     {
         // return Validator::make($data, [
         //     'name' => ['required', 'string', 'max:255'],
@@ -84,31 +84,29 @@ class RegisterController extends Controller
         //     'password' => Hash::make($data['password']),
         // ]);
 
-        $user = User::create([
-            'first_name'=>$request->first_name,
-            'last_name'=>$request->last_name,
-            'gender'=>$request->gender,
-            'phone'=>$request->phone,
-            'email'=>$request->email,
-            'password'=> Hash::make($request->password)
-        ]);
+
 
         $validator = $this->validator($request->all());
-        if($validator -> errors() -> isEmpty()){
-                
-            if($user != null){
-
+        if($validator -> errors() -> isEmpty()){  
+            $user = User::create([
+                'first_name'=>$request->first_name,
+                'last_name'=>$request->last_name,
+                'gender'=>$request->gender,
+                'phone'=>$request->phone,
+                'email'=>$request->email,
+                'password'=> Hash::make($request->password)
+            ]);
                 return  response()->json(
                     [
                         'message' => 'User Registered successful'
                     ],200
                 );
-            }
-            return response()->json(
-                [
-                    'error' =>$validator -> errors()
-                ],200
-            );
+            
         }
+        return response()->json(
+            [
+                'error' =>$validator -> errors()
+            ],200
+        );
     }
 }

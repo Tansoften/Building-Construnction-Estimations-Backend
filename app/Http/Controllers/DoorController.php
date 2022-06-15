@@ -6,7 +6,7 @@ use App\Models\Door;
 use App\Models\Building;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
 class DoorController extends Controller
 {
     private function validator($data){
@@ -28,6 +28,11 @@ class DoorController extends Controller
             return response()->json([
                 "message" => "No building is found.",
             ],200); 
+        }
+        if(!Gate::check('isUser', $building->user)){
+            return response()->json([
+                'message' => "You can't perform this action."
+            ],403);
         }
         $doors = $building->doors;
         if(!$doors->isEmpty()){
@@ -65,11 +70,15 @@ class DoorController extends Controller
                 "message" => "No building found.",
             ],200); 
         }
+        if(!Gate::check('isUser', $building->user)){
+            return response()->json([
+                'message' => "You can't perform this action."
+            ],403);
+        }
         $validate = $this->validator($request->all());
         if($validate->errors()->isEmpty()){
             //Create the ressource
            $door =  Door::create([
-                'user_id'=>1,
                 'building_id' => $buildingId,
                 'width' => $request->width,
                 'length' => $request->length,
@@ -100,6 +109,11 @@ class DoorController extends Controller
             return response()->json([
                 "message" => "No door is found.",
             ],200); 
+        }
+        if(!Gate::check('isUser', $door->building->user)){
+            return response()->json([
+                'message' => "You can't perform this action."
+            ],403);
         }
         return response()->json([
             "message" => "Door retrieved successfully",
@@ -132,6 +146,11 @@ class DoorController extends Controller
             return response()->json([
                 "message" => "No Door is found.",
             ],200); 
+        }
+        if(!Gate::check('isUser', $door->building->user)){
+            return response()->json([
+                'message' => "You can't perform this action."
+            ],403);
         }
         $validate = $this->validator($request->all());
         if($validate->errors()->isEmpty()){
