@@ -23,7 +23,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             UserSeeder::class,
-           
+            BuildingSeeder::class,
+            DoorSeeder::class,
+            WindowSeeder::class,
         ]);
     }
 }

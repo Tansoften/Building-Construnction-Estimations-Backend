@@ -1,19 +1,19 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Door;
 use App\Models\Building;
-use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
-class BuildingController extends Controller
+class DoorController extends Controller
 {
-
     private function validator($data){
         return Validator::make($data,[
                 'width'=>'required|numeric|gt:0',
                 'length'=>'required|numeric|gt:0',
-                'height'=>'required|numeric|gt:0'
+                'count'=>'required|numeric|gt:0'
             ]);
     }
     /**
@@ -21,18 +21,23 @@ class BuildingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($buidingId)
     {
-        $user = User::find(1);
-        $buidings = $user->buildings;
-        if(!$buidings->isEmpty()){
+        $building = Building::find($buidingId);
+        if(!$building){
             return response()->json([
-                "message" => "Building(s) retrieved successfully",
-                "body" => $buidings
+                "message" => "No building is found.",
+            ],200); 
+        }
+        $doors = $building->doors;
+        if(!$doors->isEmpty()){
+            return response()->json([
+                "message" => "Doors(s) retrieved successfully",
+                "body" => $doors
             ],200);
         }
         return response()->json([
-            "message" => "No building found.",
+            "message" => "No Door is found.",
         ],200);
     }
 
@@ -52,21 +57,28 @@ class BuildingController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $buildingId)
     {
+        $building = Building::find($buildingId);
+        if(!$building){
+            return response()->json([
+                "message" => "No building found.",
+            ],200); 
+        }
         $validate = $this->validator($request->all());
         if($validate->errors()->isEmpty()){
             //Create the ressource
-           $building =  Building::create([
-                'user_id' => 1,
+           $door =  Door::create([
+                'user_id'=>1,
+                'building_id' => $buildingId,
                 'width' => $request->width,
                 'length' => $request->length,
-                'height' => $request->height,
+                'count' => $request->count
            ]);
 
            return response()->json([
-            'message' => "build created successfully",
-            'body' => $building
+            'message' => "Door created successfully",
+            'body' => $door
            ],201);
         }
         return response()->json([
@@ -78,30 +90,30 @@ class BuildingController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Building  $building
+     * @param  \App\Models\Door  $door
      * @return \Illuminate\Http\Response
      */
-    public function show(Building $building, $buildingId)
+    public function show(Door $door, $doorId)
     {
-        $building = Building::find($buildingId);
-        if(!$building){
+        $door = Door::find($doorId);
+        if(!$door){
             return response()->json([
-                "message" => "No building found.",
+                "message" => "No door is found.",
             ],200); 
         }
         return response()->json([
-            "message" => "Building retrieved successfully",
-            "body" => $building
+            "message" => "Door retrieved successfully",
+            "body" => $door
         ],200);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Building  $building
+     * @param  \App\Models\Door  $door
      * @return \Illuminate\Http\Response
      */
-    public function edit(Building $building)
+    public function edit(Door $door)
     {
         //
     }
@@ -110,43 +122,42 @@ class BuildingController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Building  $building
+     * @param  \App\Models\Door  $door
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $buildingId)
+    public function update(Request $request, $doorId)
     {
-        $building = Building::find($buildingId);
-        if(!$building){
+        $door = Door::find($doorId);
+        if(!$door){
             return response()->json([
-                "message" => "No building found.",
+                "message" => "No Door is found.",
             ],200); 
         }
         $validate = $this->validator($request->all());
         if($validate->errors()->isEmpty()){
-            $building->update([
+            $door->update([
                 'width' => $request->width,
-                'height' => $request->height,
-                'length' => $request->length
+                'length' => $request->length,
+                'count' => $request->count
             ]);
             return response()->json([
-                'message' => "Building updated successfully",
-                'body' => $building
+                'message' => "Door updated successfully",
+                'body' => $door
             ],200);
         }
         return response()->json([
             'message' => "Your inputs has errors",
             'error' => $validate->errors()
         ],200);
-
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Building  $building
+     * @param  \App\Models\Door  $door
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Building $building)
+    public function destroy(Door $door)
     {
         //
     }
