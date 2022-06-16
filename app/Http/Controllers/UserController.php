@@ -16,12 +16,13 @@ class UserController extends Controller
 
     public function validator($data)
     {
+        $user = Auth::user();
         return Validator::make($data,[
             'first_name' => 'required|max:30|alpha|regex:/^[A-Z]/',
             'last_name'=> 'required|max:30|alpha|regex:/^[A-Z]/',
             'gender' => 'required|max:1|alpha|regex:/^[M,F]/',
-            'phone' => 'required|numeric|digits:10|unique:users',
-            'email' => 'required|email|unique:users',             
+            'phone' => 'required|numeric|digits:10|unique:users,phone,'.$user->id.',id',
+            'email' => 'required|email|unique:users,email,'.$user->id.',id'            
         ]);
     }
     /**
@@ -90,6 +91,15 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
+        // $request->validate([
+        //     'first_name' => 'required|max:30|alpha|regex:/^[A-Z]/',
+        //     'last_name'=> 'required|max:30|alpha|regex:/^[A-Z]/',
+        //     'gender' => 'required|max:1|alpha|regex:/^[M,F]/',
+        //     'phone' => 'required|numeric|digits:10|unique:users',
+        //     'email' => 'required|email|unique:users',  
+
+        // ]);
+
         $user = Auth::user();
         $validator = $this->validator($request->all()); 
         if($validator->errors()->isEmpty()){
@@ -123,7 +133,8 @@ class UserController extends Controller
         //
     }
     public function changepassword(Request $request){
-
+       
+        $user = Auth::user();
         $validator = Validator::make($request->all(),[
                 'password' =>'required',
                 'new_password' => 'required',
