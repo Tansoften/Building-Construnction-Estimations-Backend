@@ -65,7 +65,6 @@ class BuildingController extends Controller
                 'length' => $request->length,
                 'height' => $request->height,
            ]);
-
            return response()->json([
             'message' => "build created successfully",
             'body' => $building

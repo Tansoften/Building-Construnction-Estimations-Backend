@@ -17,4 +17,7 @@ class Window extends Model
     public function building(){
         return $this->belongsTo(Building::class, 'building_id', 'id');
     }
+    public function user(){
+        return $this->belongsTo(User::class, 'buildings','user_id');
+    }
 }

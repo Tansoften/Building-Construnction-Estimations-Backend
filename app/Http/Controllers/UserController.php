@@ -123,7 +123,7 @@ class UserController extends Controller
         //
     }
     public function changepassword(Request $request){
-
+        $user = Auth::user();
         $validator = Validator::make($request->all(),[
                 'password' =>'required',
                 'new_password' => 'required',
