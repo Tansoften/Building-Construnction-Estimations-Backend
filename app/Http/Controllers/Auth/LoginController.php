@@ -45,10 +45,6 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function logout(){
-        Auth::logout();
-    }
-
     public function authenticate(Request $request)
     {
         $credentials= $request->validate([
@@ -69,8 +65,6 @@ class LoginController extends Controller
 
         return response([
             'message' => "Invalid Credentials"
-        ],200);
-
-
+        ], 400);
     }
 }
