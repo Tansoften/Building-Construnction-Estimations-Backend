@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Models\Building;
+use App\Models\BuildingMaterial;
+use App\Models\RoofingMaterial;
 class EstimationController extends Controller
 {
     private $block_height = 23;
     private $block_thickness = 15;
     private $block_length = 45;
+    private $roofing_materials = null;
+    private $building_materials = null;
     
     public function estimate($buildingId){
         $building = Building::find($buildingId);
@@ -26,21 +30,58 @@ class EstimationController extends Controller
         $width  = $building->width * 100;
         $length  = $building->length * 100;
         $height  = $building->height * 100;
+        if($building->building_materials == null){
+            //return "hahah";
+            $blocks_without_doors_windows = (($this->wall_height_blocks($height)  + $this->wall_width_blocks($width)) * $this->wall_length_blocks($length)) *2;
+            $base_blocks = $this->get_base_blocks($building);
+            $doors_blocks = $this->get_doors_blocks($building);
+            $windows_blocks = $this->get_windows_blocks($building); 
+            $blocks = $blocks_without_doors_windows - $doors_blocks - $windows_blocks; 
+            $cement_bags = $this->cement_bags($blocks, "building") + $this->cement_bags($base_blocks, "base");
+            $sand_backets = $cement_bags *18;
+            $blocks += $base_blocks; 
 
-        $blocks_without_doors_windows = (($this->wall_height_blocks($height)  + $this->wall_width_blocks($width)) * $this->wall_length_blocks($length)) *2;
-        $base_blocks = $this->get_base_blocks($building);
-        $doors_blocks = $this->get_doors_blocks($building);
-        $windows_blocks = $this->get_windows_blocks($building); 
-        $blocks = $blocks_without_doors_windows - $doors_blocks - $windows_blocks; 
-        $cement_bags = $this->cement_bags($blocks, "building") + $this->cement_bags($base_blocks, "base");
-        $sand_backets = $cement_bags *18;
-        $blocks += $base_blocks; 
+                //Store building Materials
+                    $this->building_materials = BuildingMaterial::create([
+                    'building_id' => $building->id,
+                        'blocks' => $blocks,
+                    'cement_bags' =>$cement_bags,
+                    'sand_buckets' => $sand_backets
+                    ]);
+        }
+        else{
+            $this->building_materials = $building->building_materials;
+        }
+        if($building->roofing_materials == null){
+            $hypotenus = sqrt(pow(($building->width/2) ,2) + pow($building->length,2));
+            $woods_per_canch = ceil(4 * $hypotenus * 3.98 * 0.1);
+            $sections = ceil($hypotenus * 3.98 * 0.1);
+            $sheets = ceil(($building->length * 3.98 *$sections  * 2)/2.95);
+            $canchs = floor(($building->length * 3.28)/3);
+            $woods = ($woods_per_canch * $canchs);
+            $papy = ceil(3 * $hypotenus * 3.98 *0.1);
+            $total_papies = ($canchs - 1) * $papy *2;
+            //Store roofing material
+            $this->roofing_materials = RoofingMaterial::create([
+                    'building_id' => $building->id,
+                    'woods' => $woods,
+                    'papies' =>$total_papies,
+                    'sheets' => $sheets
+                ]);
+        }
+        else{
+            $this->roofing_materials = $building->roofing_materials;
+        }
+        
         return response()->json([
             "message" => "Estimation retrived successfully",
             'body' => [
-                'blocks' => $blocks,
-                'cement_bags' => $cement_bags,
-                'sand_buckets' => $sand_backets
+                'blocks' => $this->building_materials->blocks,
+                'cement_bags' => $this->building_materials->cement_bags,
+                'sand_buckets' => $this->building_materials->sand_buckets,
+                'woods' => $this->roofing_materials->woods,
+                'total_papies' => $this->roofing_materials->papies,
+                'sheets' => $this->roofing_materials->sheets
             ]
         ],200);
     }
