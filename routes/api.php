@@ -22,6 +22,14 @@ use App\Http\Controllers\UserController;
 
 Route::middleware('auth:sanctum')->group(function () 
 {
+    Route::get("logout", function(){
+        Auth::logout();
+        return response()->json(
+            [
+                "message"=>"Logged out."
+            ]
+        );
+    });
         //User
         Route::prefix('user')->group(function(){
             Route::get('/',[UserController::class, 'show']);
