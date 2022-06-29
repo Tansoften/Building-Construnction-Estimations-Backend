@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,8 +22,9 @@ use Illuminate\Support\Facades\Auth;
 
 Route::middleware('auth:sanctum')->group(function () 
 {
-    Route::get("logout", function(){
-        Auth::logout();
+    Route::get("logout", function(Request $request){
+        $request->user()->currentAccessToken()->delete();
+
         return response()->json(
             [
                 "message"=>"Logged out."
