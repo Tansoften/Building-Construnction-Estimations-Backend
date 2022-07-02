@@ -65,8 +65,6 @@ class RegisterController extends Controller
             'phone' => 'required|numeric|digits:10|unique:users,phone',
             'email' => 'required|email|unique:users,email',
             'password' =>'required|min:6',
-            //'confirm_password' => 'required|same:password'
-              
         ]);
     }
 
@@ -96,9 +94,11 @@ class RegisterController extends Controller
                 'email'=>$request->email,
                 'password'=> Hash::make($request->password)
             ]);
+            $token = $user->createToken("token")->plainTextToken;
                 return  response()->json(
                     [
-                        'message' => 'User Registered successful'
+                        'message' => 'User Registered successful',
+                        "token" => $token,
                     ],200
                 );
             

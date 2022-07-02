@@ -74,7 +74,7 @@ class EstimationController extends Controller
         }
         
         return response()->json([
-            "message" => "Estimation retrived successfully",
+            "message" => "Estimation retrieved successfully",
             'body' => [
                 'blocks' => $this->building_materials->blocks,
                 'cement_bags' => $this->building_materials->cement_bags,
